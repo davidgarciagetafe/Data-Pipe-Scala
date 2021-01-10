@@ -1,6 +1,8 @@
 package basic
 
-import com.bosch.test.IsbnEncoder._
+
+import com.evobanco.test
+import com.evobanco.test.IsbnEncoder
 import org.apache.spark.sql.SparkSession
 import org.apache.spark.sql.functions._
 import org.junit.{After, Before, Test}
@@ -36,8 +38,9 @@ class IsbnEncoderTest {
     val records = Seq(r1)
     val df = spark.createDataFrame(records)
 
-    val df_r = df.explodeIsbn()
 
+    val df_r = IsbnEncoder.dmcEncoder(df).explodeIsbn()
+    df_r.show
     assert(5 == df_r.count())
     assert(5 == df_r.filter(col("name") === "Learning Spark: Lightning-Fast Big Data Analysis").count())
     assert(5 == df_r.filter(col("year") === 2015).count())
@@ -56,7 +59,7 @@ class IsbnEncoderTest {
     val records = Seq(r1)
     val df = spark.createDataFrame(records)
 
-    val df_r = df.explodeIsbn()
+    val df_r = IsbnEncoder.dmcEncoder(df).explodeIsbn()
 
     assert(1 == df_r.count())
     assert(df_r.first().get(2) == "INVALID-ISBN")
@@ -69,7 +72,7 @@ class IsbnEncoderTest {
     val records = Seq(r1)
     val df = spark.createDataFrame(records)
 
-    val df_r = df.explodeIsbn()
+    val df_r = IsbnEncoder.dmcEncoder(df).explodeIsbn()
 
     assert(1 == df_r.count())
     assert(df_r.first().get(2) == "")
@@ -83,7 +86,7 @@ class IsbnEncoderTest {
     val records = Seq(r1, r2)
     val df = spark.createDataFrame(records)
 
-    val df_r = df.explodeIsbn()
+    val df_r = IsbnEncoder.dmcEncoder(df).explodeIsbn()
 
     assert(6 == df_r.count())
     assert(5 == df_r.filter(col("name") === "Learning Spark: Lightning-Fast Big Data Analysis").count())
